@@ -1,12 +1,8 @@
 package com.nandodevs.marketapi.api.controller;
 
 import java.util.List;
-import java.util.Optional;
+import javax.validation.Valid;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -23,6 +19,7 @@ import lombok.AllArgsConstructor;
 
 import com.nandodevs.marketapi.domain.model.Cliente;
 import com.nandodevs.marketapi.domain.repository.ClienteRepository;
+import com.nandodevs.marketapi.domain.service.CatalogoClienteService;
 
 @AllArgsConstructor //Cria um construtor do respository
 @RestController
@@ -31,7 +28,9 @@ public class ClienteController {
 	
 	//@Autowired - pode ser esse
 	private ClienteRepository clienteRepository;
-	
+	private CatalogoClienteService catalogoClienteService;
+
+
 	@GetMapping
 	public List<Cliente> listar() {
 		return clienteRepository.findAll();
@@ -43,9 +42,6 @@ public class ClienteController {
 			//.map(cliente -> ResponseEntity.ok(cliente))
 			.map(ResponseEntity::ok)
 			.orElse(ResponseEntity.notFound().build());
-
-		
-
 
 		//PODE SER FEITO DESSA FORMA
 		// Optional <Cliente> cliente = clienteRepository.findById(clienteId);
@@ -61,21 +57,23 @@ public class ClienteController {
 
 	@PostMapping //Inserir dados no banco
 	@ResponseStatus(HttpStatus.CREATED) //Retorna o status 201
-	public Cliente adicionar(@RequestBody Cliente cliente){
-		return clienteRepository.save(cliente);
+	public Cliente adicionar(@Valid @RequestBody Cliente cliente){
+		//return clienteRepository.save(cliente);
+		return catalogoClienteService.salvar(cliente);
+
 	}
 
 	//Método para atualizar os dados
 	@PutMapping("/{clienteId}")
-	public ResponseEntity<Cliente> atualizar(@PathVariable Long clienteId, @RequestBody Cliente cliente){
+	public ResponseEntity<Cliente> atualizar(@PathVariable Long clienteId, @Valid @RequestBody Cliente cliente){
 
 		if(!clienteRepository.existsById(clienteId)){
 			return ResponseEntity.notFound().build();
 		}
 
 		cliente.setId(clienteId); //Força a atualização do ID
-		cliente = clienteRepository.save(cliente);
-
+		//cliente = clienteRepository.save(cliente);
+		cliente = catalogoClienteService.salvar(cliente);
 		return ResponseEntity.ok(cliente); //Retorna o status 200
 	}
 
@@ -86,8 +84,9 @@ public class ClienteController {
 			return ResponseEntity.notFound().build();
 		}
 
-		clienteRepository.deleteById(clienteId);
-
+		//clienteRepository.deleteById(clienteId);
+		catalogoClienteService.excluir(clienteId);
+		
 		return ResponseEntity.noContent().build();
 	}
 
