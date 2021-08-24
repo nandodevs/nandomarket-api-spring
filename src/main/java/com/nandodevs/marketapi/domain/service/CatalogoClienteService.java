@@ -15,7 +15,12 @@ public class CatalogoClienteService { //Classe para definir as regras do negóci
     
     private ClienteRepository clienteRepository;
 
-    @Transactional
+    public Cliente buscar(Long clienteId){
+        return clienteRepository.findById(clienteId)
+        .orElseThrow(() -> new NegocioExpection("Cliente não encontrado!"));
+    }
+
+    @Transactional //Declara que esse método deve ser usado dentro de uma transação
     public Cliente salvar(Cliente cliente){
         boolean emailEmUso = clienteRepository.findByEmail(cliente.getEmail())
             .stream()
