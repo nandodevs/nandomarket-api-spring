@@ -1,6 +1,5 @@
 package com.nandodevs.marketapi.domain.repository;
 
-import java.util.List;
 import java.util.Optional;
 
 import com.nandodevs.marketapi.domain.model.Cliente;
