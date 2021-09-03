@@ -23,10 +23,7 @@ public class Cliente {
 	@NotNull(groups = ValidationGroups.ClienteId.class)
 	@EqualsAndHashCode.Include
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	/*
-	 * //Usa a forma nativa do banco de dados
-	 */	
+	@GeneratedValue(strategy = GenerationType.IDENTITY) //Usa a forma nativa do banco de dados
 	private Long id;
 
 	@NotBlank

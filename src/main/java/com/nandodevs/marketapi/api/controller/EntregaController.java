@@ -2,6 +2,9 @@ package com.nandodevs.marketapi.api.controller;
 
 
 
+import com.nandodevs.marketapi.api.model.DestinarioModel;
+import com.nandodevs.marketapi.api.model.EntregaModel;
+
 import com.nandodevs.marketapi.domain.model.Entrega;
 import com.nandodevs.marketapi.domain.repository.EntregaRepository;
 import com.nandodevs.marketapi.domain.service.SolicitacaoEntregaService;
@@ -42,10 +45,24 @@ public class EntregaController {
     }
     
     @GetMapping("/{entregaId}")
-    public ResponseEntity<Entrega> buscar(@PathVariable Long entregaId){
+    public ResponseEntity<EntregaModel> buscar(@PathVariable Long entregaId){
     	return entregaRepository.findById(entregaId)
-    			.map(ResponseEntity::ok)
-    			.orElse(ResponseEntity.notFound().build());
+    			.map(entrega -> {
+                    EntregaModel entregaModel = new EntregaModel();
+                    entregaModel.setId(entrega.getId());
+                    entregaModel.setNomeCliente(entrega.getCliente().getNome());
+                    entregaModel.setDestinatario(new DestinarioModel());
+                    entregaModel.getDestinatario().setNome(entrega.getDestinatario().getNome());
+                    entregaModel.getDestinatario().setLogradouro(entrega.getDestinatario().getLogradouro());
+                    entregaModel.getDestinatario().setComplemento(entrega.getDestinatario().getComplemento());
+                    entregaModel.getDestinatario().setBairro(entrega.getDestinatario().getBairro());
+                    entregaModel.setTaxa(entrega.getTaxa());
+                    entregaModel.setStatus(entrega.getStatus());
+                    entregaModel.setDataPedido(entrega.getDataPedido());
+                    entregaModel.setDataFinalizacao(entrega.getDataFinalizacao());
+
+                    return ResponseEntity.ok(entregaModel);
+                }).orElse(ResponseEntity.notFound().build());
     }
     
     
