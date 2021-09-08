@@ -13,6 +13,7 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,6 +33,7 @@ public class EntregaController {
 
     private SolicitacaoEntregaService solicitacaoEntregaService;
     private EntregaRepository entregaRepository;
+    private ModelMapper modelMapper;
     
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -48,22 +50,23 @@ public class EntregaController {
     public ResponseEntity<EntregaModel> buscar(@PathVariable Long entregaId){
     	return entregaRepository.findById(entregaId)
     			.map(entrega -> {
-                    EntregaModel entregaModel = new EntregaModel();
-                    entregaModel.setId(entrega.getId());
-                    entregaModel.setNomeCliente(entrega.getCliente().getNome());
-                    entregaModel.setDestinatario(new DestinarioModel());
-                    entregaModel.getDestinatario().setNome(entrega.getDestinatario().getNome());
-                    entregaModel.getDestinatario().setLogradouro(entrega.getDestinatario().getLogradouro());
-                    entregaModel.getDestinatario().setComplemento(entrega.getDestinatario().getComplemento());
-                    entregaModel.getDestinatario().setBairro(entrega.getDestinatario().getBairro());
-                    entregaModel.setTaxa(entrega.getTaxa());
-                    entregaModel.setStatus(entrega.getStatus());
-                    entregaModel.setDataPedido(entrega.getDataPedido());
-                    entregaModel.setDataFinalizacao(entrega.getDataFinalizacao());
+
+                    EntregaModel entregaModel = modelMapper.map(entrega, EntregaModel.class);
+                    // EntregaModel entregaModel = new EntregaModel();
+                    // entregaModel.setId(entrega.getId());
+                    // entregaModel.setNomeCliente(entrega.getCliente().getNome());
+                    // entregaModel.setDestinatario(new DestinarioModel());
+                    // entregaModel.getDestinatario().setNome(entrega.getDestinatario().getNome());
+                    // entregaModel.getDestinatario().setLogradouro(entrega.getDestinatario().getLogradouro());
+                    // entregaModel.getDestinatario().setComplemento(entrega.getDestinatario().getComplemento());
+                    // entregaModel.getDestinatario().setBairro(entrega.getDestinatario().getBairro());
+                    // entregaModel.setTaxa(entrega.getTaxa());
+                    // entregaModel.setStatus(entrega.getStatus());
+                    // entregaModel.setDataPedido(entrega.getDataPedido());
+                    // entregaModel.setDataFinalizacao(entrega.getDataFinalizacao());
 
                     return ResponseEntity.ok(entregaModel);
                 }).orElse(ResponseEntity.notFound().build());
     }
-    
     
 }
